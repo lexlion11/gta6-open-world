@@ -10,7 +10,7 @@ import { Renderer } from './render.js';
 import { MissionRunner } from './missions.js';
 import { makeBullet, makeCar, makeParticle, makePed, makePlayer, separateCars, stepCar } from './entities.js';
 import { spawnPed, spawnPoliceCar, spawnTraffic, stepPedSystem, stepPoliceSystem, stepTrafficSystem } from './ai.js';
-import { loadSave, saveGame } from './save.js';
+import { clearSave, loadSave, saveGame } from './save.js';
 import { between, makeRng, pickInt } from './rng.js';
 
 export const SCREEN_TITLE = 'title';
@@ -67,17 +67,14 @@ export class Game {
     for (let k = 0; k < 14; k += 1) spawnPed(this);
   }
 
-  /** Start a new game. */
+  /** Start a new game (a fresh story, clearing any save). */
   newGame() {
-    const save = loadSave();
-    if (save) {
-      this.loadState(save);
-    } else {
-      this.player.x = WORLD_W / 2;
-      this.player.y = 140;
-      this.missions.startAt(0);
-      this.missions.beginNext();
-    }
+    clearSave();
+    this.hasSave = false;
+    this.player.x = WORLD_W / 2;
+    this.player.y = 140;
+    this.missions.startAt(0);
+    this.missions.beginNext();
     this.populate();
     this.screen = SCREEN_PLAY;
     this.sound.start();
